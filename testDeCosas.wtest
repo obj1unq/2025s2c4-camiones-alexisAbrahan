@@ -1,0 +1,99 @@
+
+testSuite "Tests de las cosas" {
+
+  test "Knight Rider" {
+    assert.equals(500, knight_Rider.pesaje())
+    assert.equals(10, knight_Rider.peligrosidad())
+    assert.equals(1, knight_Rider.bulto())
+    
+    knight_Rider.aplicarAccidente()
+    // Knight no cambia nada
+    assert.equals(500, knight_Rider.pesaje())
+  }
+
+  test "Arena a granel" {
+    arena_a_granel.pesoActual = 50
+    assert.equals(50, arena_a_granel.pesoActual)
+    assert.equals(1, arena_a_granel.peligrosidad())
+    assert.equals(1, arena_a_granel.bulto())
+    
+    arena_a_granel.aplicarAccidente()
+    assert.equals(70, arena_a_granel.pesoActual)
+  }
+
+  test "Bumblebee" {
+    bumblebee.esAutoSinoTransformado = true
+    assert.equals(800, bumblebee.pesaje())
+    assert.equals(15, bumblebee.peligrosidad())
+    assert.equals(2, bumblebee.bulto())
+    
+    bumblebee.aplicarAccidente()
+    assert.isFalse(bumblebee.esAutoSinoTransformado) // ahora es robot
+    assert.equals(30, bumblebee.peligrosidad())
+  }
+
+  test "Paquete de ladrillos" {
+    paquete_de_ladrillos.cantidad = 50
+    assert.equals(100, paquete_de_ladrillos.pesaje())
+    assert.equals(2, paquete_de_ladrillos.peligrosidad())
+    assert.equals(1, paquete_de_ladrillos.bulto())
+
+    paquete_de_ladrillos.cantidad = 200
+    assert.equals(2, paquete_de_ladrillos.bulto())
+
+    paquete_de_ladrillos.cantidad = 350
+    assert.equals(3, paquete_de_ladrillos.bulto())
+
+    paquete_de_ladrillos.cantidad = 20
+    paquete_de_ladrillos.aplicarAccidente()
+    assert.equals(8, paquete_de_ladrillos.cantidad)
+
+    paquete_de_ladrillos.cantidad = 10
+    paquete_de_ladrillos.aplicarAccidente()
+    assert.equals(0, paquete_de_ladrillos.cantidad)
+  }
+
+  test "Batería antiaérea" {
+    batería_antiaérea.tieneMisilesCargados = true
+    assert.equals(300, batería_antiaérea.pesaje())
+    assert.equals(100, batería_antiaérea.peligrosidad())
+    assert.equals(2, batería_antiaérea.bulto())
+
+    batería_antiaérea.aplicarAccidente()
+    assert.isFalse(batería_antiaérea.tieneMisilesCargados)
+    assert.equals(200, batería_antiaérea.pesaje())
+    assert.equals(0, batería_antiaérea.peligrosidad())
+    assert.equals(1, batería_antiaérea.bulto())
+  }
+
+  test "Residuos radiactivos" {
+    residuos_radiactivo.pesoAhora = 30
+    assert.equals(200, residuos_radiactivo.peligrosidad())
+    assert.equals(1, residuos_radiactivo.bulto())
+    
+    residuos_radiactivo.aplicarAccidente()
+    assert.equals(45, residuos_radiactivo.pesoAhora)
+  }
+
+  test "Contenedor portuario" {
+    contenedor_Portuario.contieneA = []
+    assert.equals(100, contenedor_Portuario.pesaje())
+    assert.equals(0, contenedor_Portuario.peligrosidad())
+    assert.equals(1, contenedor_Portuario.bulto())
+
+    contenedor_Portuario.contieneA = [knight_Rider, arena_a_granel]
+    arena_a_granel.pesoActual = 50
+    assert.equals(650, contenedor_Portuario.pesaje())
+    assert.equals(10, contenedor_Portuario.peligrosidad())
+    assert.equals(3, contenedor_Portuario.bulto())
+  }
+
+  test "Embalaje de seguridad" {
+    embalaje_De_Seguridad.contieneA.clear()
+    embalaje_De_Seguridad.contieneA.add(knight_Rider)
+    assert.equals(500, embalaje_De_Seguridad.pesaje())
+    assert.equals(5, embalaje_De_Seguridad.peligrosidad())
+    assert.equals(2, embalaje_De_Seguridad.bulto())
+  }
+
+}
