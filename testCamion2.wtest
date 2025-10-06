@@ -1,4 +1,3 @@
-import wollok.mirror.*
 import cosas.*
 import camion.*
 
@@ -112,7 +111,7 @@ describe "El metodo seEncuentraExcedidoDePeso() funciona correctamente" {
     camion.cargar(bumblebee)
     camion.cargar(knight_Rider)
     camion.cargar(knight_Rider_Impar)
-    arena_a_granel.pesoActual(500) // ARRELGAR ESTO
+    arena_a_granel.pesoActual(500)                                 
     camion.cargar(arena_a_granel)   
     assert.notThat(camion.seEncuentraExcedidoDePeso())
   }
@@ -128,14 +127,14 @@ describe "El metodo cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosi
   test "Devuelve la batería antiaérea si se busca menor a 100" {
     assert.equals(
       batería_antiaérea,
-      camion.cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosidad(99) //rojo
+      camion.cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosidad(99) 
     )
   }
   
   test "Devuelve a bumblebee si se busca menor a 30" {
     assert.equals(
       bumblebee,
-      camion.cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosidad(30) //rojo
+      camion.cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosidad(30) //amarillo
     )
   }
 }
@@ -225,5 +224,174 @@ describe "pesos de los objectos" {
     paquete_de_ladrillos.cantidad(300)
     camion.cargar(paquete_de_ladrillos)
     assert.equals([800,600],camion.todosLosPesos())
+  }
+}
+
+describe "TotalBultos" {
+  test "Cada cosa se puede transportar en uno o más bultos, dependiendo de la cosa en sí" {
+  contenedor_Portuario.contieneA([knight_Rider,bumblebee])
+  camion.cargar(contenedor_Portuario)
+  embalaje_De_Seguridad.contieneA([residuos_radiactivo])
+  camion.cargar(embalaje_De_Seguridad)
+  camion.cargar(arena_a_granel)
+  paquete_de_ladrillos.cantidad(50)
+  camion.cargar(paquete_de_ladrillos)
+  batería_antiaérea.tieneMisilesCargados(false)
+  camion.cargar(batería_antiaérea) 
+  assert.equals(9,camion.totalBultos())
+  }
+
+
+  test "Caso 2: paquete de 150 ladrillos, batería cargada y contenedor vacío" {
+	paquete_de_ladrillos.cantidad(150)
+	batería_antiaérea.tieneMisilesCargados(true)
+	contenedor_Portuario.contieneA([])
+
+	camion.cargar(paquete_de_ladrillos)
+	camion.cargar(batería_antiaérea)
+	camion.cargar(contenedor_Portuario)
+
+	assert.equals(5, camion.totalBultos())
+}
+
+test "Caso 3: paquete de 350 ladrillos y arena a granel" {
+	paquete_de_ladrillos.cantidad(350)
+	camion.cargar(paquete_de_ladrillos)
+	camion.cargar(arena_a_granel)
+
+	assert.equals(4, camion.totalBultos())
+}
+
+}
+
+
+describe "ACCIDENTEE!!!!!!!!!!!!" {
+  test "Suponiendo que el camión tiene:
+  El contenedor portuario con Knight Rider y Bumblebee en modo auto.  
+  El embalaje de seguridad envolviendo 30 kg de residuos radiactivos.
+  50 kg de arena a granel.
+  Un paquete de 100 ladrillos.
+  La batería antiaérea cargada." {
+  contenedor_Portuario.contieneA([knight_Rider,bumblebee])
+  camion.cargar(contenedor_Portuario)                               //AMARILLO
+  residuos_radiactivo.pesoAhora(30)
+  embalaje_De_Seguridad.contieneA([residuos_radiactivo])
+  camion.cargar(embalaje_De_Seguridad)
+  arena_a_granel.pesoActual(50)
+  camion.cargar(arena_a_granel)
+  paquete_de_ladrillos.cantidad(100)
+  camion.cargar(paquete_de_ladrillos)
+  camion.cargar(batería_antiaérea) 
+
+  assert.notThat(bumblebee.esAutoSinoTransformado())
+  assert.equals(30, embalaje_De_Seguridad.pesaje())
+  assert.equals(88, paquete_de_ladrillos.cantidad())
+  assert.notThat(batería_antiaérea.tieneMisilesCargados())
+
+  }
+
+
+
+  test "Suponiendo que el camión tiene Bumblebee en modo robot, 30 kg de residuos radiactivos, un paquete de 10 ladrillos y la batería antiaérea descargada — al producirse un accidente cambian los estados" {
+
+  bumblebee.esAutoSinoTransformado(false)
+  residuos_radiactivo.pesoAhora(30)
+  paquete_de_ladrillos.cantidad(10)
+  batería_antiaérea.tieneMisilesCargados(false)
+  camion.cargar(bumblebee)
+  camion.cargar(residuos_radiactivo)
+  camion.cargar(paquete_de_ladrillos)                                 //ROJO
+  camion.cargar(batería_antiaérea)
+  camion.accidente()
+  assert.that(bumblebee.esAutoSinoTransformado())                     // pasó a modo auto
+  assert.equals(45, residuos_radiactivo.pesoAhora())          // aumentó a 45 kg
+  assert.equals(0, paquete_de_ladrillos.cantidad())           // sin ladrillos
+  assert.notThat(batería_antiaérea.tieneMisilesCargados()) // sigue descargada
+ }
+
+}
+
+
+
+
+describe "TRANSPORTE hacia el almacén" {
+
+  method initialize() {
+    camion.carga().clear()
+    almacen.stock().clear()
+  }
+
+  test "Caso: ruta 9 exitoso — el camión puede transportar sin problemas" {
+    almacen.stock().addAll([knight_Rider, residuos_radiactivo])
+    bumblebee.esAutoSinoTransformado(true)
+    arena_a_granel.pesoActual(50)
+    camion.cargar(bumblebee)
+    camion.cargar(arena_a_granel)
+    ruta.nivelPeligrosidadPermitido(20)                                                     //ROJO
+    camion.transportar(almacen, ruta)
+    assert.that(camion.carga().isEmpty())  // el camión quedó vacío
+    assert.that(almacen.stock().contains(bumblebee))
+    assert.that(almacen.stock().contains(arena_a_granel))
+    assert.equals(4, almacen.stock().size()) // Knight, residuos, bumblebee y arena
+  }
+
+  test "Caso: ruta 9 fallido por peligrosidad — Bumblebee en modo robot" {
+    almacen.stock().clear()
+    almacen.stock().addAll([knight_Rider, residuos_radiactivo])
+    bumblebee.esAutoSinoTransformado(false)
+    arena_a_granel.pesoActual(50)
+    camion.carga().clear()
+    camion.cargar(bumblebee)                                                              
+    camion.cargar(arena_a_granel)
+    ruta.nivelPeligrosidadPermitido(20)
+    assert.throwsException({ camion.transportar(almacen, ruta) })
+    assert.equals(2, camion.carga().size())           // Bumblebee y arena siguen en camión
+    assert.equals(2, almacen.stock().size())          // Knight Rider y residuos en almacén
+    assert.that(almacen.stock().contains(knight_Rider))
+    assert.that(almacen.stock().contains(residuos_radiactivo))
+  }
+
+  test "Caso: ruta 9 fallido por exceso de peso" {
+    almacen.stock().clear()
+    almacen.stock().addAll([knight_Rider, residuos_radiactivo])
+    bumblebee.esAutoSinoTransformado(true)
+    arena_a_granel.pesoActual(2000) // mucho peso
+    camion.carga().clear()
+    camion.cargar(bumblebee)
+    camion.cargar(arena_a_granel)
+    ruta.nivelPeligrosidadPermitido(20)
+    assert.throwsException({ camion.transportar(almacen, ruta) })
+    assert.equals(2, camion.carga().size())          // carga sigue igual
+    assert.equals(2, almacen.stock().size())         // almacén sin cambios
+  }
+
+  test "Caso: caminos vecinales exitoso" {
+    almacen.stock().clear()
+    almacen.stock().addAll([knight_Rider, residuos_radiactivo])
+    bumblebee.esAutoSinoTransformado(true)
+    arena_a_granel.pesoActual(50)
+    camion.carga().clear()
+    camion.cargar(bumblebee)
+    camion.cargar(arena_a_granel)
+    camion.transportar(almacen, ruta)                                                 // ROJO
+    assert.that(camion.carga().isEmpty())
+    assert.equals(4, almacen.stock().size())
+    assert.that(almacen.stock().contains(bumblebee))
+    assert.that(almacen.stock().contains(arena_a_granel))
+  }
+
+  test "Caso: caminos vecinales fallido (peso máximo 300kg)" {
+    almacen.stock().clear()
+    almacen.stock().addAll([knight_Rider, residuos_radiactivo])
+    bumblebee.esAutoSinoTransformado(true)
+    arena_a_granel.pesoActual(50)
+    camion.carga().clear()
+    camion.cargar(bumblebee)
+    camion.cargar(arena_a_granel)
+    assert.throwsException({ camion.transportar(almacen, caminosVecinales) })
+    assert.equals(2, camion.carga().size())
+    assert.equals(2, almacen.stock().size())
+    assert.that(camion.carga().contains(bumblebee))
+    assert.that(camion.carga().contains(arena_a_granel))
   }
 }

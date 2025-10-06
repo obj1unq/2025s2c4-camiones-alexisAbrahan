@@ -51,6 +51,10 @@ object arena_a_granel {
 	method aplicarAccidente(){
 		pesoActual = pesoActual +20
 	}
+	method pesaje(){
+		return (pesoActual)        //mejorar la estructura
+	}
+
 }
 
 object bumblebee{
@@ -144,7 +148,7 @@ object residuos_radiactivo {
 }
 
 object contenedor_Portuario {
-  var contieneA = []
+  var property contieneA = []
   method pesaje() {
 		return (100 + contieneA.sum { objectos => objectos.pesaje() }) //Kg
 	}

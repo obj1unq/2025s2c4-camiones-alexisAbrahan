@@ -13,6 +13,12 @@ object camion {
 		 carga.add(unaCosa)
 	    
 	}
+		method darmeA_(cosa_){
+		return(
+		carga.find{ cosa => cosa == cosa_  }
+		)
+
+	}
 
 	method pesoTotalDelCamión(){
 		return(
@@ -21,7 +27,7 @@ object camion {
 	}
 
 	method seEncuentraExcedidoDePeso() {
-		return(self.pesoTotalDelCamión() >= 2500)
+		return(self.pesoTotalDelCamión() <= 2500)
 
 	} 
 	
@@ -53,6 +59,7 @@ object camion {
 		)
 
 	}
+
 
 	method cosasCargadasQueEsténEnElCamiónQueSeanMásPeligrosasQueOtraCosaIndicada(cosa){
 		return(
@@ -119,4 +126,14 @@ object almacen {
   var property stock = []
 }
 
+
+    object caminosVecinales {
+      var property pesoMaximoPermitido = 2000
+
+      method nivelPeligrosidadPermitido() { return (999) }
+
+      method soporta(camion) {
+        return (camion.pesoTotalDelCamión() <= pesoMaximoPermitido)
+      }
+    }
 
