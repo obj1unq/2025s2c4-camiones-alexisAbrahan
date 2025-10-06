@@ -19,6 +19,26 @@ object knight_Rider {
 
 }
 
+object knight_Rider_Impar {
+ 
+  method pesaje() {
+		return (501) //Kg
+	}
+
+
+  method peligrosidad() {
+	 return (10)
+	}
+
+  method bulto() {
+  	 return (1)
+    }
+
+	method aplicarAccidente(){
+
+	} 
+}
+
 object arena_a_granel {
   var property pesoActual = 0
 
@@ -33,7 +53,7 @@ object arena_a_granel {
 	}
 }
 
-object bumblebee {
+object bumblebee{
 	var property  esAutoSinoTransformado = true
 
     method pesaje() {
@@ -65,7 +85,7 @@ object paquete_de_ladrillos {
 	return(2*cantidad)//Kg
   } 
   method peligrosidad() {
-	return(2)
+	return(2 + 2 * (cantidad / 300))
   }
   method bulto() {
 		if (cantidad <= 100) return (1)
@@ -133,8 +153,8 @@ object contenedor_Portuario {
   method peligrosidad() {
 	 return (
 		if(contieneA.isEmpty()){
-		contieneA.max({elemento => elemento.peligrosidad()})}
-		else (0)
+		0}
+		else (contieneA.max({elemento => elemento.peligrosidad()}))
 	 )
 	} 
   method bulto() {
@@ -147,7 +167,7 @@ object contenedor_Portuario {
  
 }
 object embalaje_De_Seguridad{
-   const contieneA = []
+   var property contieneA = []
    method pesaje() {
 		return (contieneA.sum { objectos => objectos.pesaje() }) //Kg
 	}

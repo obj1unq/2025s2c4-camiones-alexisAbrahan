@@ -1,8 +1,18 @@
 import cosas.*
 
 object camion {
-	var carga = []
+	var property carga = []
 	const tara = 1000 //kg
+
+
+	method cargar(unaCosa) {
+		
+		if (carga.contains(unaCosa))
+		 self.error("Ya esta" + unaCosa + "en el camion")
+	    else
+		 carga.add(unaCosa)
+	    
+	}
 
 	method pesoTotalDelCamión(){
 		return(
@@ -11,7 +21,7 @@ object camion {
 	}
 
 	method seEncuentraExcedidoDePeso() {
-		return(self.pesoTotalDelCamión() <= 2500)
+		return(self.pesoTotalDelCamión() >= 2500)
 
 	} 
 	
@@ -34,37 +44,33 @@ object camion {
 		)
 	}
 		
-	method cargar(unaCosa) {
-		
-		if (carga.contains(unaCosa)) self.error(
-        "Ya esta" + unaCosa + "en el camion"
-      )
-	  else{
-		carga.add(unaCosa)
-	  }
-	}
+
 
 
 	method cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosidad(nivelPeligrosidadExacto){
-		carga.findOrDefault{ cosa => cosa.peligrosidad() < nivelPeligrosidadExacto  }
+		return(
+		carga.find{ cosa => cosa.peligrosidad() > nivelPeligrosidadExacto  }
+		)
 
 	}
 
 	method cosasCargadasQueEsténEnElCamiónQueSeanMásPeligrosasQueOtraCosaIndicada(cosa){
+		return(
 		self.cosasCargadasQueEsténEnElCamiónQueSuperen_NivelDePeligrosidad(cosa.peligrosidad())
+		)
 	}
 
 	method puedeCircularEn_(camino){
 		return(
-		carga.all {cosa => cosa.peligrosidad() < camino.nivelPeligrosidadPermitido()}
+		carga.all {cosa => cosa.peligrosidad() < camino.nivelPeligrosidadPermitido()})
 				&&
 		(not self.seEncuentraExcedidoDePeso())
-		)
+		
 	}
 
 	method tieneElCamionAlgoEntrePesaje_Y_(mínimo,máximo){
 		return(
-		carga.any {cosa => ((cosa.pesaje() < mínimo) < máximo) }
+		carga.any {cosa => (máximo > cosa.pesaje() > mínimo)  }
 		)
 	}
 
@@ -73,8 +79,9 @@ object camion {
 			self.error("ESTA VACIO, COMO VA A TENER UNA COSA MAS PESADA???????????????? (Emoji enojado)")
 		} 
 		else{
+			return(
 		carga.max({ objeto => objeto.pesaje() })
-
+			)
 		}
 	}
 
@@ -105,7 +112,7 @@ object camion {
 }
 
 object ruta {
-  var property nivelPeligrosidadPermitido = 0
+  var property nivelPeligrosidadPermitido = 20
 }
 
 object almacen {
