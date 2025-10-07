@@ -198,7 +198,8 @@ describe "Tiene algo que pesa entre dos valores" {
         Tiene algo que pesa entre 5 y 1000.
         No tiene algo que pese entre 900 y 1000." {
     camion.cargar(bumblebee)
-    paquete_de_ladrillos.cantidad(300) 
+    paquete_de_ladrillos.cantidad(300)
+    camion.cargar(paquete_de_ladrillos)
     assert.that(camion.tieneElCamionAlgoEntrePesaje_Y_(5,700))                 
     assert.that(camion.tieneElCamionAlgoEntrePesaje_Y_(5,1000)) //Rojo
     assert.notThat(camion.tieneElCamionAlgoEntrePesaje_Y_(900,1000))
@@ -207,6 +208,7 @@ describe "Tiene algo que pesa entre dos valores" {
   test "La cosa más pesada que tenga el camión. Ojo que lo que se pide es la cosa y no su peso." {
     camion.cargar(bumblebee)
     paquete_de_ladrillos.cantidad(300)
+    camion.cargar(paquete_de_ladrillos)
     assert.equals(camion.laCosaMásPesadaQueTengaElCamión(), bumblebee)                  
 
   }
